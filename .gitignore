@@ -4,6 +4,10 @@ obj/
 bin/
 lib/
 
+# IDE directories
+.vs/
+.vscode/
+
 # Prerequisites
 *.d
 
