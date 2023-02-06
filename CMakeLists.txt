@@ -7,31 +7,38 @@ enable_testing()
 
 set(INCLUDE_DIR include)
 set(SOURCE_DIR src)
-set(TESTS_DIR test)
+set(TESTS_DIR tests)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/obj)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 set(SOURCES
-    ${INCLUDE_DIR}/Algorithm.hpp
-    ${INCLUDE_DIR}/Data.hpp
-    ${INCLUDE_DIR}/Operator.hpp
-    ${SOURCE_DIR}/Algorithm.cpp
-    ${SOURCE_DIR}/Data.cpp
-    ${SOURCE_DIR}/Operator.cpp
+    ${INCLUDE_DIR}/mt/definitions.hpp
+    ${INCLUDE_DIR}/mt/algorithms.hpp
+    ${SOURCE_DIR}/algorithms.cpp
+    ${INCLUDE_DIR}/mt/data.hpp
+    ${SOURCE_DIR}/data.cpp
+    ${INCLUDE_DIR}/mt/exceptions.hpp
+    ${SOURCE_DIR}/exceptions.cpp
+    ${INCLUDE_DIR}/mt/operators.hpp
+    ${SOURCE_DIR}/operators.cpp
+    ${INCLUDE_DIR}/mt/utilities.hpp
+    ${SOURCE_DIR}/utilities.cpp
 )
 
 set(TESTS
-    ${TESTS_DIR}/test_hello.cpp
+    ${TESTS_DIR}/test_data.cpp
+    ${TESTS_DIR}/test_exceptions.cpp
+    ${TESTS_DIR}/test_utilities.cpp
 )
 
 add_library(MultiTomo STATIC ${SOURCES})
 add_executable(Tests ${TESTS})
 include_directories(${INCLUDE_DIR})
 
-target_link_libraries(
-    Tests
+target_link_libraries(Tests
     GTest::gtest_main
+    MultiTomo
 )
 
 # Build settings
