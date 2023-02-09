@@ -2,6 +2,7 @@
 
 #include <stdexcept>
 #include <format>
+#include <algorithm>
 
 #include "mt/exceptions.hpp"
 #include "mt/utilities.hpp"
@@ -73,4 +74,77 @@ void mt::Data::set(const MT_SIZE row, const MT_SIZE col, const MT_SIZE slice, co
 		throw mt::IndexError(row, col, slice, m_Rows, m_Cols, m_Slices);
 
 	m_Data.at(mt::sub2idx(row, col, slice, m_Rows, m_Cols, m_Slices)) = value;
+}
+
+void mt::Data::operator+=(const MT_FLOAT value)
+{
+	transform([value](const MT_FLOAT x) { return x + value; });
+}
+
+
+void mt::Data::operator+=(const Data& other)
+{
+	if (m_Rows != other.m_Rows || m_Cols != other.m_Cols || m_Slices != other.m_Slices)
+		throw mt::ShapeMismatchError(other.m_Rows, other.m_Cols, other.m_Slices, m_Rows, m_Cols, m_Slices);
+
+	transform(other, [](const MT_FLOAT x1, const MT_FLOAT x2) { return x1 + x2; });
+}
+
+void mt::Data::operator-=(const MT_FLOAT value)
+{
+	transform([value](const MT_FLOAT x) { return x - value; });
+}
+
+
+void mt::Data::operator-=(const Data& other)
+{
+	if (m_Rows != other.m_Rows || m_Cols != other.m_Cols || m_Slices != other.m_Slices)
+		throw mt::ShapeMismatchError(other.m_Rows, other.m_Cols, other.m_Slices, m_Rows, m_Cols, m_Slices);
+
+	transform(other, [](const MT_FLOAT x1, const MT_FLOAT x2) { return x1 - x2; });
+}
+
+void mt::Data::operator*=(const MT_FLOAT value)
+{
+	transform([value](const MT_FLOAT x) { return x * value; });
+}
+
+
+void mt::Data::operator*=(const Data& other)
+{
+	if (m_Rows != other.m_Rows || m_Cols != other.m_Cols || m_Slices != other.m_Slices)
+		throw mt::ShapeMismatchError(other.m_Rows, other.m_Cols, other.m_Slices, m_Rows, m_Cols, m_Slices);
+
+	transform(other, [](const MT_FLOAT x1, const MT_FLOAT x2) { return x1 * x2; });
+}
+
+void mt::Data::operator/=(const MT_FLOAT value)
+{
+	if (value == 0)
+		throw mt::DivideByZeroError();
+
+	transform([value](const MT_FLOAT x) { return x / value; });
+}
+
+
+void mt::Data::operator/=(const Data& other)
+{
+	if (m_Rows != other.m_Rows || m_Cols != other.m_Cols || m_Slices != other.m_Slices)
+		throw mt::ShapeMismatchError(other.m_Rows, other.m_Cols, other.m_Slices, m_Rows, m_Cols, m_Slices);
+	for (const MT_FLOAT value : other.m_Data) {
+		if (value == 0)
+			throw mt::DivideByZeroError();
+	}
+
+	transform(other, [](const MT_FLOAT x1, const MT_FLOAT x2) { return x1 / x2; });
+}
+
+void mt::Data::transform(std::function<MT_FLOAT(const MT_FLOAT)> operation)
+{
+	std::transform(m_Data.begin(), m_Data.end(), m_Data.begin(), operation);
+}
+
+void mt::Data::transform(const Data& other, std::function<MT_FLOAT(const MT_FLOAT, const MT_FLOAT)> operation)
+{
+	std::transform(m_Data.begin(), m_Data.end(), other.m_Data.begin(), m_Data.begin(), operation);
 }

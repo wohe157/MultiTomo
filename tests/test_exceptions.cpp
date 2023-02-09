@@ -28,3 +28,8 @@ TEST(IndexErrorTest, IndexErrorMessage) {
 	mt::IndexError e2(10, 19, 20, 10, 20, 30);
 	EXPECT_STREQ(e2.what(), "Subscript out of bounds: tried to access element (10,19,20) in object with shape (10,20,30).");
 }
+
+TEST(DivideByZeroErrorTest, DivideByZeroErrorMessage) {
+	mt::DivideByZeroError e;
+	EXPECT_STREQ(e.what(), "Can't divide by zero.");
+}

@@ -29,3 +29,8 @@ mt::IndexError::IndexError(const MT_SIZE row, const MT_SIZE col, const MT_SIZE s
 	: mt::Exception(std::format("Subscript out of bounds: tried to access element ({},{},{}) in object with shape ({},{},{}).", row, col, slice, rows, cols, slices))
 {
 }
+
+mt::DivideByZeroError::DivideByZeroError()
+	: mt::Exception("Can't divide by zero.")
+{
+}

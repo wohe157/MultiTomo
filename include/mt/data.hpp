@@ -2,6 +2,7 @@
 
 #include <array>
 #include <vector>
+#include <functional>
 
 #include "mt/definitions.hpp"
 
@@ -36,6 +37,22 @@ public:
 
 	void set(const MT_SIZE idx, const MT_FLOAT value);
 	void set(const MT_SIZE row, const MT_SIZE col, const MT_SIZE slice, const MT_FLOAT value);
+
+	void operator+=(const MT_FLOAT value);
+	void operator+=(const Data& other);
+
+	void operator-=(const MT_FLOAT value);
+	void operator-=(const Data& other);
+
+	void operator*=(const MT_FLOAT value);
+	void operator*=(const Data& other);
+
+	void operator/=(const MT_FLOAT value);
+	void operator/=(const Data& other);
+
+private:
+	void transform(std::function<MT_FLOAT(const MT_FLOAT)> operation);
+	void transform(const Data& other, std::function<MT_FLOAT(const MT_FLOAT, const MT_FLOAT)> operation);
 };
 
 } // namespace mt

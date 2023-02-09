@@ -42,4 +42,10 @@ public:
 	IndexError(const MT_SIZE row, const MT_SIZE col, const MT_SIZE slice, const MT_SIZE rows, const MT_SIZE cols, const MT_SIZE slices);
 };
 
+class DivideByZeroError : public Exception
+{
+public:
+	DivideByZeroError();
+};
+
 } // namespace mt
