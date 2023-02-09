@@ -1,10 +1,5 @@
+#include "mt/pch.hpp"
 #pragma once
-
-#include <array>
-#include <vector>
-#include <functional>
-
-#include "mt/definitions.hpp"
 
 namespace mt {
 

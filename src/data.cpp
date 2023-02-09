@@ -1,9 +1,5 @@
 #include "mt/data.hpp"
 
-#include <stdexcept>
-#include <format>
-#include <algorithm>
-
 #include "mt/exceptions.hpp"
 #include "mt/utilities.hpp"
 

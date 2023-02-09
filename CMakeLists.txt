@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.16)
 project(MultiTomo)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -8,11 +8,15 @@ enable_testing()
 set(INCLUDE_DIR include)
 set(SOURCE_DIR src)
 set(TESTS_DIR tests)
+
+set(PCH ${INCLUDE_DIR}/mt/pch.hpp)
+
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/obj)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 set(SOURCES
+    ${INCLUDE_DIR}/mt/pch.hpp
     ${INCLUDE_DIR}/mt/definitions.hpp
     ${INCLUDE_DIR}/mt/algorithms.hpp
     ${SOURCE_DIR}/algorithms.cpp
@@ -33,6 +37,8 @@ set(TESTS
 )
 
 add_library(MultiTomo STATIC ${SOURCES})
+target_precompile_headers(MultiTomo PUBLIC ${PCH})
+
 add_executable(Tests ${TESTS})
 include_directories(${INCLUDE_DIR})
 
