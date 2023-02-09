@@ -135,6 +135,62 @@ void mt::Data::operator/=(const Data& other)
 	transform(other, [](const MT_FLOAT x1, const MT_FLOAT x2) { return x1 / x2; });
 }
 
+mt::Data mt::Data::operator+(const MT_FLOAT rhs)
+{
+	mt::Data result(*this);
+	result += rhs;
+	return result;
+}
+
+mt::Data mt::Data::operator+(const mt::Data& rhs)
+{
+	mt::Data result(*this);
+	result += rhs;
+	return result;
+}
+
+mt::Data mt::Data::operator-(const MT_FLOAT rhs)
+{
+	mt::Data result(*this);
+	result -= rhs;
+	return result;
+}
+
+mt::Data mt::Data::operator-(const mt::Data& rhs)
+{
+	mt::Data result(*this);
+	result -= rhs;
+	return result;
+}
+
+mt::Data mt::Data::operator*(const MT_FLOAT rhs)
+{
+	mt::Data result(*this);
+	result *= rhs;
+	return result;
+}
+
+mt::Data mt::Data::operator*(const mt::Data& rhs)
+{
+	mt::Data result(*this);
+	result *= rhs;
+	return result;
+}
+
+mt::Data mt::Data::operator/(const MT_FLOAT rhs)
+{
+	mt::Data result(*this);
+	result /= rhs;
+	return result;
+}
+
+mt::Data mt::Data::operator/(const mt::Data& rhs)
+{
+	mt::Data result(*this);
+	result /= rhs;
+	return result;
+}
+
 void mt::Data::transform(std::function<MT_FLOAT(const MT_FLOAT)> operation)
 {
 	std::transform(m_Data.begin(), m_Data.end(), m_Data.begin(), operation);

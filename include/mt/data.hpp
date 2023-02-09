@@ -45,6 +45,18 @@ public:
 	void operator/=(const MT_FLOAT value);
 	void operator/=(const Data& other);
 
+	Data operator+(MT_FLOAT rhs);
+	Data operator+(const Data& rhs);
+	
+	Data operator-(MT_FLOAT rhs);
+	Data operator-(const Data& rhs);
+	
+	Data operator*(MT_FLOAT rhs);
+	Data operator*(const Data& rhs);
+	
+	Data operator/(MT_FLOAT rhs);
+	Data operator/(const Data& rhs);
+
 private:
 	void transform(std::function<MT_FLOAT(const MT_FLOAT)> operation);
 	void transform(const Data& other, std::function<MT_FLOAT(const MT_FLOAT, const MT_FLOAT)> operation);
