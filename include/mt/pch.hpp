@@ -9,5 +9,3 @@
 
 #include <exception>
 #include <stdexcept>
-
-#include "mt/definitions.hpp"

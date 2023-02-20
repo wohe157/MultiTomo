@@ -2,21 +2,39 @@
 
 #include "mt/exceptions.hpp"
 
-MT_SIZE mt::sub2idx(const MT_SIZE row, const MT_SIZE col, const MT_SIZE slice, const MT_SIZE rows, const MT_SIZE cols, const MT_SIZE slices)
+mt::Size mt::sub2idx(const mt::Subscript2d sub, const mt::Shape2d shape)
 {
-	if (!mt::isValidIdx(row, rows) || !mt::isValidIdx(col, cols) || !mt::isValidIdx(slice, slices))
-		throw mt::IndexError(row, col, slice, rows, cols, slices);
+	if (sub.i >= shape.rows || sub.j >= shape.cols)
+		throw mt::Exception(std::format("Subscript ({},{}) is out of bounds ({},{}).", sub.i, sub.j, shape.rows, shape.cols));
 
-	// row-major indexing
-	return row * cols * slices + col * slices + slice;
+	return sub.i * shape.cols + sub.j;
 }
 
-bool mt::isValidIdx(const MT_SIZE idx, const MT_SIZE size)
+mt::Size mt::sub2idx(const mt::Subscript3d sub, const mt::Shape3d shape)
 {
-	return idx < size && idx >= 0;
+	if (sub.i >= shape.rows || sub.j >= shape.cols || sub.k >= shape.slices)
+		throw mt::Exception(std::format("Subscript ({},{},{}) is out of bounds ({},{},{}).", sub.i, sub.j, sub.k, shape.rows, shape.cols, shape.slices));
+
+	return sub.i * shape.cols * shape.slices + sub.j * shape.slices + sub.k;
 }
 
-bool mt::isValidSize(const MT_SIZE size)
+mt::Subscript2d mt::idx2sub(const mt::Size idx, const mt::Shape2d shape)
 {
-	return size > 0;
+	if (idx >= (shape.rows * shape.cols))
+		throw mt::Exception(std::format("Index ({}) is out of bounds ({},{}).", idx, shape.rows, shape.cols));
+
+	mt::Size j = idx % shape.cols;
+	mt::Size i = (idx - j) / shape.cols;
+	return { i, j };
+}
+
+mt::Subscript3d mt::idx2sub(const mt::Size idx, const mt::Shape3d shape)
+{
+	if (idx >= (shape.rows * shape.cols * shape.slices))
+		throw mt::Exception(std::format("Index ({}) is out of bounds ({},{},{}).", idx, shape.rows, shape.cols, shape.slices));
+
+	mt::Size k = idx % shape.slices;
+	mt::Size j = ((idx - k) / shape.slices) % shape.cols;
+	mt::Size i = ((idx - k) / shape.slices - j) / shape.cols;
+	return { i, j, k };
 }

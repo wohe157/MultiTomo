@@ -1,13 +1,18 @@
 #include "mt/pch.hpp"
-#pragma once
+#ifndef MT_UTILITIES_HPP
+#define MT_UTILITIES_HPP
+
+#include "mt/definitions.hpp"
 
 namespace mt
 {
 
-MT_SIZE sub2idx(const MT_SIZE row, const MT_SIZE col, const MT_SIZE slice, const MT_SIZE rows, const MT_SIZE cols, const MT_SIZE slices);
+	Size sub2idx(const Subscript2d sub, const Shape2d shape);
+	Size sub2idx(const Subscript3d sub, const Shape3d shape);
 
-bool isValidIdx(const MT_SIZE idx, const MT_SIZE size);
-
-bool isValidSize(const MT_SIZE size);
+	Subscript2d idx2sub(const Size idx, const Shape2d shape);
+	Subscript3d idx2sub(const Size idx, const Shape3d shape);
 
 } // namespace mt
+
+#endif // MT_UTILITIES_HPP

@@ -3,8 +3,10 @@ project(MultiTomo_Tests)
 set(INCLUDE_DIR ../include)
 
 set(SOURCES
+    test_algorithms.cpp
     test_data.cpp
     test_exceptions.cpp
+    test_operators.cpp
     test_utilities.cpp
 )
 

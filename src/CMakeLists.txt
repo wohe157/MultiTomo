@@ -10,6 +10,7 @@ set(SOURCES
     ${INCLUDE_DIR}/mt/exceptions.hpp
     ${INCLUDE_DIR}/mt/operators.hpp
     ${INCLUDE_DIR}/mt/utilities.hpp
+    definitions.cpp
     algorithms.cpp
     data.cpp
     exceptions.cpp

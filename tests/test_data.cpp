@@ -1,213 +1,63 @@
 #include <gtest/gtest.h>
 #include "mt/data.hpp"
 
+#include "mt/definitions.hpp"
 #include "mt/exceptions.hpp"
 
-namespace {
-    constexpr MT_SIZE rows = 2, cols = 3, slices = 2;
-    constexpr MT_FLOAT value = 2.0f;
-    const std::vector<MT_FLOAT> data = { 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f };
-}
-
-class DataTest : public ::testing::Test {
-protected:
-    mt::Data f_Data1, f_Data2;
-
-    // This can't go to the SetUp method because
-    // mt::Data doesn't have a default constructor
-    DataTest() 
-        : f_Data1(rows, cols, slices, data)
-        , f_Data2(rows, cols, slices, 1.0f)
-    {
-    }
-};
-
-TEST_F(DataTest, ZeroConstructor) {
-    mt::Data d(rows, cols, slices);
-    EXPECT_EQ(d.rows(), rows);
-    EXPECT_EQ(d.cols(), cols);
-    EXPECT_EQ(d.slices(), slices);
-    for (MT_SIZE i = 0; i < d.size(); i++)
-        EXPECT_EQ(d.get(i), 0.0f);
-}
-
-TEST_F(DataTest, ValueConstructor) {
-    mt::Data d(rows, cols, slices, value);
-    EXPECT_EQ(d.rows(), rows);
-    EXPECT_EQ(d.cols(), cols);
-    EXPECT_EQ(d.slices(), slices);
-    for (MT_SIZE i = 0; i < d.size(); i++)
-        EXPECT_EQ(d.get(i), value);
-}
-
-TEST_F(DataTest, DataConstructor) {
-    mt::Data d(rows, cols, slices, data);
-    EXPECT_EQ(d.rows(), rows);
-    EXPECT_EQ(d.cols(), cols);
-    EXPECT_EQ(d.slices(), slices);
-    for (MT_SIZE i = 0; i < d.size(); i++)
-        EXPECT_EQ(d.get(i), data.at(i));
-}
-
-TEST_F(DataTest, CopyConstructor) {
-    mt::Data d1(rows, cols, slices, data);
-    mt::Data d2(d1);
-    EXPECT_EQ(d2.rows(), rows);
-    EXPECT_EQ(d2.cols(), cols);
-    EXPECT_EQ(d2.slices(), slices);
-    for (MT_SIZE i = 0; i < rows * cols * slices; i++)
-        EXPECT_EQ(d2.get(i), data.at(i));
-}
-
-TEST_F(DataTest, AssignmentOperator) {
-    mt::Data f_Data2 = f_Data1;
-    for (MT_SIZE i = 0; i < f_Data2.size(); i++)
-        EXPECT_EQ(f_Data2.get(i), f_Data1.get(i));
-}
-
-TEST_F(DataTest, RowsMethod) {
-    EXPECT_EQ(f_Data1.rows(), rows);
-}
-
-TEST_F(DataTest, ColsMethod) {
-    EXPECT_EQ(f_Data1.cols(), cols);
-}
-
-TEST_F(DataTest, SlicesMethod) {
-    EXPECT_EQ(f_Data1.slices(), slices);
-}
-
-TEST_F(DataTest, SizeMethod) {
-    EXPECT_EQ(f_Data1.size(), rows * cols * slices);
-}
-
-TEST_F(DataTest, GetAndSetWithSingleIndex) {
-    f_Data1.set(3, 42.0f);
-    ASSERT_EQ(f_Data1.get(3), 42.0f);
-}
-
-TEST_F(DataTest, GetAndSetWithSubscript) {
-    f_Data1.set(1, 2, 0, 42.0f);
-    ASSERT_EQ(f_Data1.get(1, 2, 0), 42.0f);
-}
-
-TEST_F(DataTest, GetWithInvalidSingleIndex) {
-    ASSERT_THROW(f_Data1.get(f_Data1.size()), mt::IndexError);
-}
-
-TEST_F(DataTest, GetWithInvalidSubscript) {
-    ASSERT_THROW(f_Data1.get(f_Data1.rows(), f_Data1.cols(), f_Data1.slices()), mt::IndexError);
-}
-
-TEST_F(DataTest, SetWithInvalidSingleIndex) {
-    ASSERT_THROW(f_Data2.set(f_Data2.size(), 42.0f), mt::IndexError);
-}
-
-TEST_F(DataTest, SetWithInvalidSubscript) {
-    ASSERT_THROW(f_Data2.set(f_Data2.rows(), f_Data2.cols(), f_Data2.slices(), 42.0f), mt::IndexError);
-}
-
-TEST_F(DataTest, AdditionOperatorWithScalar) {
-    mt::Data result = f_Data1 + 1.0f;
-    f_Data1 += 1.0;
-    mt::Data expected = mt::Data(2, 3, 2, { 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f });
-    for (MT_SIZE i = 0; i < f_Data2.size(); i++) {
-        EXPECT_EQ(result.get(i), expected.get(i));
-        EXPECT_EQ(f_Data1.get(i), expected.get(i));
+TEST(DataTest, DefaultConstructor) {
+    mt::Data data(10);
+    EXPECT_EQ(data.size(), 10);
+    for (mt::Size i = 0; i < data.size(); ++i) {
+        EXPECT_FLOAT_EQ(data.get(i), 0.0f);
     }
 }
 
-TEST_F(DataTest, AdditionOperatorWithData) {
-    mt::Data result = f_Data1 + f_Data2;
-    f_Data1 += f_Data2;
-    mt::Data expected = mt::Data(2, 3, 2, { 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f });
-    for (MT_SIZE i = 0; i < f_Data2.size(); i++) {
-        EXPECT_EQ(result.get(i), expected.get(i));
-        EXPECT_EQ(f_Data1.get(i), expected.get(i));
+TEST(DataTest, ValueConstructor) {
+    mt::Data data(5, 1.23f);
+    EXPECT_EQ(data.size(), 5);
+    for (mt::Size i = 0; i < data.size(); ++i) {
+        EXPECT_FLOAT_EQ(data.get(i), 1.23f);
     }
 }
 
-TEST_F(DataTest, AdditionOperatorThrows) {
-    EXPECT_THROW(f_Data1 += mt::Data(2, 3, 1), mt::ShapeMismatchError);
-    EXPECT_THROW(f_Data1 + mt::Data(2, 3, 1), mt::ShapeMismatchError);
-}
-
-TEST_F(DataTest, SubtractionOperatorWithScalar) {
-    mt::Data result = f_Data1 - 1.0f;
-    f_Data1 -= 1.0;
-    mt::Data expected = mt::Data(2, 3, 2, { 0.0f, 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f });
-    for (MT_SIZE i = 0; i < f_Data2.size(); i++) {
-        EXPECT_EQ(result.get(i), expected.get(i));
-        EXPECT_EQ(f_Data1.get(i), expected.get(i));
+TEST(DataTest, CopyConstructor) {
+    mt::Data original(5, 1.23f);
+    mt::Data copy(original);
+    EXPECT_EQ(original.size(), copy.size());
+    for (mt::Size i = 0; i < original.size(); ++i) {
+        EXPECT_FLOAT_EQ(original.get(i), copy.get(i));
     }
 }
 
-TEST_F(DataTest, SubtractionOperatorWithData) {
-    mt::Data result = f_Data1 - f_Data2;
-    f_Data1 -= f_Data2;
-    mt::Data expected = mt::Data(2, 3, 2, { 0.0f, 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f });
-    for (MT_SIZE i = 0; i < f_Data2.size(); i++) {
-        EXPECT_EQ(result.get(i), expected.get(i));
-        EXPECT_EQ(f_Data1.get(i), expected.get(i));
+TEST(DataTest, Assignment_Valid) {
+    mt::Data data1(10, 1.23f);
+    mt::Data data2(10, 0.0f);
+    data2 = data1;
+    EXPECT_EQ(data1.size(), data2.size());
+    for (mt::Size i = 0; i < data1.size(); ++i) {
+        EXPECT_FLOAT_EQ(data1.get(i), data2.get(i));
     }
 }
 
-TEST_F(DataTest, SubtractionOperatorThrows) {
-    EXPECT_THROW(f_Data1 -= mt::Data(2, 3, 1), mt::ShapeMismatchError);
-    EXPECT_THROW(f_Data1 - mt::Data(2, 3, 1), mt::ShapeMismatchError);
+TEST(DataTest, Assignment_Invalid) {
+    mt::Data data1(5, 1.23f);
+    mt::Data data2(10, 0.0f);
+    EXPECT_THROW(data2 = data1, mt::Exception);
 }
 
-TEST_F(DataTest, MultiplicationOperatorWithScalar) {
-    mt::Data result = f_Data1 * 2.0f;
-    f_Data1 *= 2.0;
-    mt::Data expected = mt::Data(2, 3, 2, { 2.0f, 4.0f, 6.0f, 8.0f, 10.0f, 12.0f, 14.0f, 16.0f, 18.0f, 20.0f, 22.0f, 24.0f });
-    for (MT_SIZE i = 0; i < f_Data2.size(); i++) {
-        EXPECT_EQ(result.get(i), expected.get(i));
-        EXPECT_EQ(f_Data1.get(i), expected.get(i));
-    }
+TEST(DataTest, SetAndGet) {
+    mt::Data data(3);
+    data.set(0, 1.23f);
+    data.set(1, 2.34f);
+    data.set(2, 3.45f);
+    EXPECT_FLOAT_EQ(data.get(0), 1.23f);
+    EXPECT_FLOAT_EQ(data.get(1), 2.34f);
+    EXPECT_FLOAT_EQ(data.get(2), 3.45f);
 }
 
-TEST_F(DataTest, MultiplicationOperatorWithData) {
-    mt::Data rhs(2, 3, 2, { 2.0f, 2.0f, 2.0f, 2.0f, 2.0f, 2.0f, 2.0f, 2.0f, 2.0f, 2.0f, 2.0f, 1.0f });
-    mt::Data result = f_Data1 * rhs;
-    f_Data1 *= rhs;
-    mt::Data expected = mt::Data(2, 3, 2, { 2.0f, 4.0f, 6.0f, 8.0f, 10.0f, 12.0f, 14.0f, 16.0f, 18.0f, 20.0f, 22.0f, 12.0f });
-    for (MT_SIZE i = 0; i < f_Data2.size(); i++) {
-        EXPECT_EQ(result.get(i), expected.get(i));
-        EXPECT_EQ(f_Data1.get(i), expected.get(i));
-    }
-}
-
-TEST_F(DataTest, MultiplicationOperatorThrows) {
-    EXPECT_THROW(f_Data1 *= mt::Data(2, 3, 1), mt::ShapeMismatchError);
-    EXPECT_THROW(f_Data1 * mt::Data(2, 3, 1), mt::ShapeMismatchError);
-}
-
-TEST_F(DataTest, DivisionOperatorWithScalar) {
-    mt::Data result = f_Data1 / 2.0f;
-    f_Data1 /= 2.0;
-    mt::Data expected = mt::Data(2, 3, 2, { 0.5f, 1.0f, 1.5f, 2.0f, 2.5f, 3.0f, 3.5f, 4.0f, 4.5f, 5.0f, 5.5f, 6.0f });
-    for (MT_SIZE i = 0; i < f_Data2.size(); i++) {
-        EXPECT_EQ(result.get(i), expected.get(i));
-        EXPECT_EQ(f_Data1.get(i), expected.get(i));
-    }
-}
-
-TEST_F(DataTest, DivisionOperatorWithData) {
-    mt::Data rhs(2, 3, 2, { 2.0f, 2.0f, 2.0f, 2.0f, 2.0f, 2.0f, 2.0f, 2.0f, 2.0f, 2.0f, 2.0f, 1.0f });;
-    mt::Data result = f_Data1 / rhs;
-    f_Data1 /= rhs;
-    mt::Data expected = mt::Data(2, 3, 2, { 0.5f, 1.0f, 1.5f, 2.0f, 2.5f, 3.0f, 3.5f, 4.0f, 4.5f, 5.0f, 5.5f, 12.0f });
-    for (MT_SIZE i = 0; i < f_Data2.size(); i++) {
-        EXPECT_EQ(result.get(i), expected.get(i));
-        EXPECT_EQ(f_Data1.get(i), expected.get(i));
-    }
-}
-
-TEST_F(DataTest, DivisionOperatorThrows) {
-    EXPECT_THROW(f_Data1 /= mt::Data(2, 3, 1, 1.0f), mt::ShapeMismatchError);
-    EXPECT_THROW(f_Data1 / mt::Data(2, 3, 1, 1.0f), mt::ShapeMismatchError);
-
-    EXPECT_THROW(f_Data1 /= mt::Data(2, 3, 2, 0.0f), mt::DivideByZeroError);
-    EXPECT_THROW(f_Data1 / mt::Data(2, 3, 2, 0.0f), mt::DivideByZeroError);
+TEST(DataTest, SetAndGet_OutOfBounds)
+{
+    mt::Data data(3);
+    EXPECT_THROW(data.get(3), mt::Exception);
+    EXPECT_THROW(data.set(3, 1.23f), mt::Exception);
 }

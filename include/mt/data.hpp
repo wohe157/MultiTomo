@@ -1,65 +1,31 @@
 #include "mt/pch.hpp"
-#pragma once
+#ifndef MT_DATA_HPP
+#define MT_DATA_HPP
 
-namespace mt {
+#include "mt/definitions.hpp"
 
-class Data
+namespace mt
 {
-private:
-	const MT_SIZE m_Rows;
-	const MT_SIZE m_Cols;
-	const MT_SIZE m_Slices;
-	std::vector<MT_FLOAT> m_Data;
 
-public:
-	Data(const MT_SIZE rows, const MT_SIZE cols, const MT_SIZE slices);
-	Data(const MT_SIZE rows, const MT_SIZE cols, const MT_SIZE slices, MT_FLOAT value);
-	Data(const MT_SIZE rows, const MT_SIZE cols, const MT_SIZE slices, std::vector<MT_FLOAT> data);
-	Data(const Data& other);
-	
-	const Data& operator=(const Data& other);
+	class Data
+	{
+	private:
+		const Size m_Size;
+		std::vector<Float> m_Data;
 
-	inline MT_SIZE rows() const { return m_Rows; }
+	public:
+		Data(const Size size, const Float value = 0.0f);
+		Data(const Data& other);
 
-	inline MT_SIZE cols() const { return m_Cols; }
+		const Data& operator=(const Data& other);
 
-	inline MT_SIZE slices() const { return m_Slices; }
+		inline Size size() const { return m_Size; }
 
-	inline MT_SIZE size() const { return m_Rows * m_Cols * m_Slices; }
-	
-	MT_FLOAT get(const MT_SIZE idx) const;
-	MT_FLOAT get(const MT_SIZE row, const MT_SIZE col, const MT_SIZE slice) const;
+		Float get(const Size idx) const;
 
-	void set(const MT_SIZE idx, const MT_FLOAT value);
-	void set(const MT_SIZE row, const MT_SIZE col, const MT_SIZE slice, const MT_FLOAT value);
-
-	void operator+=(const MT_FLOAT value);
-	void operator+=(const Data& other);
-
-	void operator-=(const MT_FLOAT value);
-	void operator-=(const Data& other);
-
-	void operator*=(const MT_FLOAT value);
-	void operator*=(const Data& other);
-
-	void operator/=(const MT_FLOAT value);
-	void operator/=(const Data& other);
-
-	Data operator+(const MT_FLOAT rhs);
-	Data operator+(const Data& rhs);
-	
-	Data operator-(const MT_FLOAT rhs);
-	Data operator-(const Data& rhs);
-	
-	Data operator*(const MT_FLOAT rhs);
-	Data operator*(const Data& rhs);
-	
-	Data operator/(const MT_FLOAT rhs);
-	Data operator/(const Data& rhs);
-
-private:
-	void transform(std::function<MT_FLOAT(const MT_FLOAT)> operation);
-	void transform(const Data& other, std::function<MT_FLOAT(const MT_FLOAT, const MT_FLOAT)> operation);
-};
+		const Data& set(const Size idx, const Float value);
+	};
 
 } // namespace mt
+
+#endif // MT_DATA_HPP
