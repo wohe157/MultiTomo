@@ -10,12 +10,12 @@ namespace mt {
 		const std::string m_Message;
 
 	public:
-		Exception(const std::string& msg) : m_Message(msg) {}
-		Exception(std::string&& msg) : m_Message(std::move(msg)) {}
+		Exception(const std::string& msg);
+		Exception(std::string&& msg);
 	
-		virtual ~Exception() throw() {}
+		virtual ~Exception() throw();
 
-		const char* what() const throw() { return m_Message.c_str(); }
+		const char* what() const throw();
 	};
 
 } // namespace mt
