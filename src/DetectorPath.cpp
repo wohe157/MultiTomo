@@ -14,14 +14,5 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
-#include <array>
-#include <vector>
+#include "multitomo.hpp"
 
-#include <string>
-#include <format>
-
-#include <functional>
-#include <algorithm>
-
-#include <exception>
-#include <stdexcept>

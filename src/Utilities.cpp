@@ -14,5 +14,21 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
-#include <gtest/gtest.h>
-#include "mt/operators.hpp"
+#include "multitomo.hpp"
+
+#include <cassert>
+
+inline mt::Uint mt::sub2idx(const mt::Uint i, const mt::Uint j, const mt::Uint ni, const mt::Uint nj)
+{
+    assert(i < ni);
+    assert(j < nj);
+    return i * nj + j;
+}
+
+inline mt::Uint mt::sub2idx(const mt::Uint i, const mt::Uint j, const mt::Uint k, const mt::Uint ni, const mt::Uint nj, const mt::Uint nk)
+{
+    assert(i < ni);
+    assert(j < nj);
+    assert(k < nk);
+    return i * nj * nk + j * nk + k;
+}

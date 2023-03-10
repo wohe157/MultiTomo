@@ -14,50 +14,24 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
-#include "mt/pch.hpp"
-#ifndef MT_DEFINITIONS_HPP
-#define MT_DEFINITIONS_HPP
+#include "multitomo.hpp"
 
-namespace mt
+#include <array>
+#include <cassert>
+
+inline mt::Uint mt::VolumeGeometry::Size() const
 {
+    return Nx * Ny * Nz;
+}
 
-	typedef float Float;
-	typedef size_t Size;
-
-	struct Shape2d
-	{
-		Size rows;
-		Size cols;
-
-		bool operator==(const Shape2d& rhs) const;
-	};
-
-	struct Shape3d
-	{
-		Size rows;
-		Size cols;
-		Size slices;
-
-		bool operator==(const Shape3d& rhs) const;
-	};
-
-	struct Subscript2d
-	{
-		Size i;
-		Size j;
-
-		bool operator==(const Subscript2d& rhs) const;
-	};
-
-	struct Subscript3d
-	{
-		Size i;
-		Size j;
-		Size k;
-
-		bool operator==(const Subscript3d& rhs) const;
-	};
-
-} // namespace mt
-
-#endif // MT_DEFINITIONS_HPP
+std::array<mt::Float, 3> mt::VolumeGeometry::Position(const mt::Uint ix, const mt::Uint iy, const mt::Uint iz) const
+{
+    assert(ix < Nx); // these automatically check that Nx, Ny, and Nz are greater than 0
+    assert(iy < Ny);
+    assert(iz < Nz);
+    return {
+        Cx + Dx * ((mt::Float)ix - (mt::Float)(Nx-1)/2.0f),
+        Cy + Dy * ((mt::Float)iy - (mt::Float)(Ny-1)/2.0f),
+        Cz + Dz * ((mt::Float)iz - (mt::Float)(Nz-1)/2.0f)
+    };
+}
