@@ -18,14 +18,14 @@
 
 #include <cassert>
 
-inline mt::Uint mt::sub2idx(const mt::Uint i, const mt::Uint j, const mt::Uint ni, const mt::Uint nj)
+mt::Uint mt::sub2idx(const mt::Uint i, const mt::Uint j, const mt::Uint ni, const mt::Uint nj)
 {
     assert(i < ni);
     assert(j < nj);
     return i * nj + j;
 }
 
-inline mt::Uint mt::sub2idx(const mt::Uint i, const mt::Uint j, const mt::Uint k, const mt::Uint ni, const mt::Uint nj, const mt::Uint nk)
+mt::Uint mt::sub2idx(const mt::Uint i, const mt::Uint j, const mt::Uint k, const mt::Uint ni, const mt::Uint nj, const mt::Uint nk)
 {
     assert(i < ni);
     assert(j < nj);

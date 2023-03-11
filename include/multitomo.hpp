@@ -29,18 +29,18 @@ namespace mt
     using Uint = unsigned int;
     using Float = float;
 
-    struct ParallelBeam
+    struct ParallelBeamCfg
     {
     };
 
-    struct ConeBeam
+    struct ConeBeamCfg
     {
         // Position of the source w.r.t. the detectorcenter. A typical cone
         // beam detector is represented by Sx=0, Sy=0, Sz<0.
         Float Sx, Sy, Sz;
     };
 
-    struct VectorBeam
+    struct VectorBeamCfg
     {
         // x-, y-, and z-components of the vectors indicating the normals of the
         // beams for each detector pixel. A beam orthogonal to the detector (as
@@ -63,10 +63,10 @@ namespace mt
         Float Cx, Cy, Cz;   // Center of the volume
 
         // Returns the number of voxels in the volume
-        inline Uint Size() const;
+        Uint Size() const { return Nx * Ny * Nz; };
 
         // Returns the (x,y,z) position of a given voxel
-        inline std::array<Float, 3> Position(const Uint ix, const Uint iy, const Uint iz) const;
+        std::array<Float, 3> Position(const Uint ix, const Uint iy, const Uint iz) const;
     };
 
     // ====================================================================== //
@@ -77,16 +77,16 @@ namespace mt
         Uint Nx, Ny;        // Number of pixels
         Float Dx, Dy;       // Pixel spacings
         Float Cx, Cy, Cz;   // Center of the detector (Cz specifies offset along the normal of the detector plane)
-        std::variant<ParallelBeam, ConeBeam, VectorBeam> BeamType;
+        std::variant<ParallelBeamCfg, ConeBeamCfg, VectorBeamCfg> BeamCfg;
 
         // Returns the number of pixels in the detector
-        inline Uint Size() const;
+        Uint Size() const { return Nx * Ny; }
 
         // Returns the (x,y,z) position of a given pixel in the detector
-        inline std::array<Float, 3> Position(const Uint ix, const Uint iy) const;
+        std::array<Float, 3> Position(const Uint ix, const Uint iy) const;
 
         // Returns the (x,y,z) normal vector of the ray through a given pixel
-        inline std::array<Float, 3> Ray(const Uint ix, const Uint iy) const;
+        std::array<Float, 3> Ray(const Uint ix, const Uint iy) const;
     };
 
     // ====================================================================== //
@@ -107,8 +107,8 @@ namespace mt
     // ====================================================================== //
     //                               Utilities                                //
     // ====================================================================== //
-    inline Uint sub2idx(const Uint i, const Uint j, const Uint ni, const Uint nj);
-    inline Uint sub2idx(const Uint i, const Uint j, const Uint k, const Uint ni, const Uint nj, const Uint nk);
+    Uint sub2idx(const Uint i, const Uint j, const Uint ni, const Uint nj);
+    Uint sub2idx(const Uint i, const Uint j, const Uint k, const Uint ni, const Uint nj, const Uint nk);
 
 } // namespace mt
 

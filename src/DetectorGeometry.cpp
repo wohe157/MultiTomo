@@ -21,12 +21,7 @@
 #include <cassert>
 #include <stdexcept>
 
-inline mt::Uint mt::DetectorGeometry::Size() const
-{
-    return Nx * Ny;
-}
-
-inline std::array<mt::Float, 3> mt::DetectorGeometry::Position(const mt::Uint ix, const mt::Uint iy) const
+std::array<mt::Float, 3> mt::DetectorGeometry::Position(const mt::Uint ix, const mt::Uint iy) const
 {
     assert(ix < Nx);
     assert(iy < Ny);
@@ -43,22 +38,22 @@ inline std::array<mt::Float, 3> mt::DetectorGeometry::Ray(const mt::Uint ix, con
     assert(ix < Nx);
     assert(iy < Ny);
 
-    if (std::get_if<mt::ParallelBeam>(&BeamType)) {
+    if (std::get_if<mt::ParallelBeamCfg>(&BeamCfg)) {
         return { 0.0f, 0.0f, 1.0f };
     }
-    else if (const mt::ConeBeam* cone_beam = std::get_if<mt::ConeBeam>(&BeamType)) {
+    else if (const mt::ConeBeamCfg* cone_beam_cfg = std::get_if<mt::ConeBeamCfg>(&BeamCfg)) {
         std::array<mt::Float, 3> pos = Position(ix, iy);
-        mt::Float vx = pos[0] - cone_beam->Sx;
-        mt::Float vy = pos[1] - cone_beam->Sy;
-        mt::Float vz = pos[2] - cone_beam->Sz;
+        mt::Float vx = pos[0] - cone_beam_cfg->Sx;
+        mt::Float vy = pos[1] - cone_beam_cfg->Sy;
+        mt::Float vz = pos[2] - cone_beam_cfg->Sz;
         mt::Float norm = std::sqrt(vx * vx + vy * vy + vz * vz);
         return { vx / norm, vy / norm, vz / norm };
     }
-    else if (const mt::VectorBeam* vector_beam = std::get_if<mt::VectorBeam>(&BeamType)) {
+    else if (const mt::VectorBeamCfg* vector_beam_cfg = std::get_if<mt::VectorBeamCfg>(&BeamCfg)) {
         mt::Uint idx = mt::sub2idx(iy, ix, Ny, Nx);
-        mt::Float vx = vector_beam->Vx.at(idx); // By using "at()", we implicitly check that there are enough elements in the vectors
-        mt::Float vy = vector_beam->Vy.at(idx);
-        mt::Float vz = vector_beam->Vz.at(idx);
+        mt::Float vx = vector_beam_cfg->Vx.at(idx); // By using "at()", we implicitly check that there are enough elements in the vectors
+        mt::Float vy = vector_beam_cfg->Vy.at(idx);
+        mt::Float vz = vector_beam_cfg->Vz.at(idx);
         mt::Float norm = std::sqrt(vx * vx + vy * vy + vz * vz);
         return { vx / norm, vy / norm, vz / norm };
     }

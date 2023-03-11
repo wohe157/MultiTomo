@@ -18,5 +18,6 @@
 
 int main()
 {
+    mt::Uint idx = mt::sub2idx(1, 2, 3, 3);
     return 0;
 }

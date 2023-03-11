@@ -19,11 +19,6 @@
 #include <array>
 #include <cassert>
 
-inline mt::Uint mt::VolumeGeometry::Size() const
-{
-    return Nx * Ny * Nz;
-}
-
 std::array<mt::Float, 3> mt::VolumeGeometry::Position(const mt::Uint ix, const mt::Uint iy, const mt::Uint iz) const
 {
     assert(ix < Nx); // these automatically check that Nx, Ny, and Nz are greater than 0
