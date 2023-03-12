@@ -36,7 +36,8 @@ namespace mt
     struct ConeBeamCfg
     {
         // Position of the source w.r.t. the detectorcenter. A typical cone
-        // beam detector is represented by Sx=0, Sy=0, Sz<0.
+        // beam detector is represented by Sx=0, Sy=0, Sz>R with R being the
+        // distance between the object and the detector.
         Float Sx, Sy, Sz;
     };
 
@@ -62,6 +63,12 @@ namespace mt
         Float Dx, Dy, Dz;   // Voxel spacings
         Float Cx, Cy, Cz;   // Center of the volume
 
+        VolumeGeometry(
+            const Uint nx, const Uint ny, const Uint nz,
+            const Float dx, const Float dy, const Float dz,
+            const Float cx, const Float cy, const Float cz
+        );
+
         // Returns the number of voxels in the volume
         Uint Size() const { return Nx * Ny * Nz; };
 
@@ -78,6 +85,13 @@ namespace mt
         Float Dx, Dy;       // Pixel spacings
         Float Cx, Cy, Cz;   // Center of the detector (Cz specifies offset along the normal of the detector plane)
         std::variant<ParallelBeamCfg, ConeBeamCfg, VectorBeamCfg> BeamCfg;
+
+        DetectorGeometry(
+            const Uint nx, const Uint ny,
+            const Float dx, const Float dy,
+            const Float cx, const Float cy, const Float cz,
+            const std::variant<ParallelBeamCfg, ConeBeamCfg, VectorBeamCfg> beam_cfg
+        );
 
         // Returns the number of pixels in the detector
         Uint Size() const { return Nx * Ny; }
@@ -109,6 +123,12 @@ namespace mt
     // ====================================================================== //
     Uint sub2idx(const Uint i, const Uint j, const Uint ni, const Uint nj);
     Uint sub2idx(const Uint i, const Uint j, const Uint k, const Uint ni, const Uint nj, const Uint nk);
+
+    void validateShapeNonzero(const Uint ni, const Uint nj);
+    void validateShapeNonzero(const Uint ni, const Uint nj, const Uint nk);
+
+    void validateSubscriptInBounds(const Uint i, const Uint j, const Uint ni, const Uint nj);
+    void validateSubscriptInBounds(const Uint i, const Uint j, const Uint k, const Uint ni, const Uint nj, const Uint nk);
 
 } // namespace mt
 

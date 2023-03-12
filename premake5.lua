@@ -49,10 +49,11 @@ workspace "MultiTomo"
         targetdir "%{BinariesDir}"
 
         files {
-            "%{SourceDirs.Tests}/test_DetectorGeometry.cpp",
-            "%{SourceDirs.Tests}/test_DetectorPath.cpp",
-            "%{SourceDirs.Tests}/test_Utilities.cpp",
-            "%{SourceDirs.Tests}/test_VolumeGeometry.cpp",
+            "%{SourceDirs.Tests}/tests.cpp",
+            "%{SourceDirs.Tests}/tests_DetectorGeometry.cpp",
+            "%{SourceDirs.Tests}/tests_DetectorPath.cpp",
+            "%{SourceDirs.Tests}/tests_Utilities.cpp",
+            "%{SourceDirs.Tests}/tests_VolumeGeometry.cpp",
         }
 
         includedirs {

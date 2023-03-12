@@ -17,16 +17,31 @@
 #include "multitomo.hpp"
 
 #include <array>
-#include <cassert>
+#include <stdexcept>
 
-std::array<mt::Float, 3> mt::VolumeGeometry::Position(const mt::Uint ix, const mt::Uint iy, const mt::Uint iz) const
+namespace mt
 {
-    assert(ix < Nx); // these automatically check that Nx, Ny, and Nz are greater than 0
-    assert(iy < Ny);
-    assert(iz < Nz);
-    return {
-        Cx + Dx * ((mt::Float)ix - (mt::Float)(Nx-1)/2.0f),
-        Cy + Dy * ((mt::Float)iy - (mt::Float)(Ny-1)/2.0f),
-        Cz + Dz * ((mt::Float)iz - (mt::Float)(Nz-1)/2.0f)
-    };
-}
+
+    VolumeGeometry::VolumeGeometry(
+        const Uint nx, const Uint ny, const Uint nz,
+        const Float dx, const Float dy, const Float dz,
+        const Float cx, const Float cy, const Float cz
+    )
+        : Nx(nx), Ny(ny), Nz(nz), Dx(dx), Dy(dy), Dz(dz), Cx(cx), Cy(cy), Cz(cz)
+    {
+        validateShapeNonzero(Nx, Ny, Nz);
+    }
+
+    std::array<Float, 3> VolumeGeometry::Position(const Uint ix, const Uint iy, const Uint iz) const
+    {
+        validateShapeNonzero(Nx, Ny, Nz);
+        validateSubscriptInBounds(ix, iy, iz, Nx, Ny, Nz);
+
+        return {
+            Cx + Dx * ((Float)ix - (Float)(Nx - 1) / 2.0f),
+            Cy + Dy * ((Float)iy - (Float)(Ny - 1) / 2.0f),
+            Cz + Dz * ((Float)iz - (Float)(Nz - 1) / 2.0f)
+        };
+    }
+
+} // namespace mt

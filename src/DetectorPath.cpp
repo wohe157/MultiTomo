@@ -16,3 +16,7 @@
 //
 #include "multitomo.hpp"
 
+namespace mt
+{
+
+} // namespace mt

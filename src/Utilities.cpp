@@ -16,19 +16,49 @@
 //
 #include "multitomo.hpp"
 
-#include <cassert>
+#include <stdexcept>
 
-mt::Uint mt::sub2idx(const mt::Uint i, const mt::Uint j, const mt::Uint ni, const mt::Uint nj)
+namespace mt
 {
-    assert(i < ni);
-    assert(j < nj);
-    return i * nj + j;
-}
 
-mt::Uint mt::sub2idx(const mt::Uint i, const mt::Uint j, const mt::Uint k, const mt::Uint ni, const mt::Uint nj, const mt::Uint nk)
-{
-    assert(i < ni);
-    assert(j < nj);
-    assert(k < nk);
-    return i * nj * nk + j * nk + k;
-}
+    Uint sub2idx(const Uint i, const Uint j, const Uint ni, const Uint nj)
+    {
+        validateShapeNonzero(ni, nj);
+        validateSubscriptInBounds(i, j, ni, nj);
+
+        return i * nj + j;
+    }
+
+    Uint sub2idx(const Uint i, const Uint j, const Uint k, const Uint ni, const Uint nj, const Uint nk)
+    {
+        validateShapeNonzero(ni, nj, nk);
+        validateSubscriptInBounds(i, j, k, ni, nj, nk);
+
+        return i * nj * nk + j * nk + k;
+    }
+
+    void validateShapeNonzero(const Uint ni, const Uint nj)
+    {
+        if (ni < 1 || nj < 1)
+            throw std::runtime_error("Shape cannot contain values less than 1.");
+    }
+
+    void validateShapeNonzero(const Uint ni, const Uint nj, const Uint nk)
+    {
+        if (ni < 1 || nj < 1 || nk < 1)
+            throw std::runtime_error("Shape cannot contain values less than 1.");
+    }
+
+    void validateSubscriptInBounds(const Uint i, const Uint j, const Uint ni, const Uint nj)
+    {
+        if (i >= ni || j >= nj)
+            throw std::runtime_error("Subscript is out of bounds.");
+    }
+
+    void validateSubscriptInBounds(const Uint i, const Uint j, const Uint k, const Uint ni, const Uint nj, const Uint nk)
+    {
+        if (i >= ni || j >= nj || k >= nk)
+            throw std::runtime_error("Subscript is out of bounds.");
+    }
+
+} // namespace mt

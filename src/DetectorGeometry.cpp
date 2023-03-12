@@ -21,43 +21,60 @@
 #include <cassert>
 #include <stdexcept>
 
-std::array<mt::Float, 3> mt::DetectorGeometry::Position(const mt::Uint ix, const mt::Uint iy) const
+namespace mt
 {
-    assert(ix < Nx);
-    assert(iy < Ny);
 
-    return {
-        Cx + Dx * ((mt::Float)ix - (mt::Float)(Nx-1) / 2.0f),
-        Cy + Dy * ((mt::Float)iy - (mt::Float)(Ny-1) / 2.0f),
-        Cz
-    };
-}
+    DetectorGeometry::DetectorGeometry(
+        const Uint nx, const Uint ny,
+        const Float dx, const Float dy,
+        const Float cx, const Float cy, const Float cz,
+        const std::variant<ParallelBeamCfg, ConeBeamCfg, VectorBeamCfg> beam_cfg
+    )
+        : Nx(nx), Ny(ny), Dx(dx), Dy(dy), Cx(cx), Cy(cy), Cz(cz), BeamCfg(beam_cfg)
+    {
+        validateShapeNonzero(nx, ny);
+    }
 
-inline std::array<mt::Float, 3> mt::DetectorGeometry::Ray(const mt::Uint ix, const mt::Uint iy) const
-{
-    assert(ix < Nx);
-    assert(iy < Ny);
 
-    if (std::get_if<mt::ParallelBeamCfg>(&BeamCfg)) {
-        return { 0.0f, 0.0f, 1.0f };
+    std::array<Float, 3> DetectorGeometry::Position(const Uint ix, const Uint iy) const
+    {
+        validateShapeNonzero(Nx, Ny);
+        validateSubscriptInBounds(ix, iy, Nx, Ny);
+
+        return {
+            Cx + Dx * ((Float)ix - (Float)(Nx - 1) / 2.0f),
+            Cy + Dy * ((Float)iy - (Float)(Ny - 1) / 2.0f),
+            Cz
+        };
     }
-    else if (const mt::ConeBeamCfg* cone_beam_cfg = std::get_if<mt::ConeBeamCfg>(&BeamCfg)) {
-        std::array<mt::Float, 3> pos = Position(ix, iy);
-        mt::Float vx = pos[0] - cone_beam_cfg->Sx;
-        mt::Float vy = pos[1] - cone_beam_cfg->Sy;
-        mt::Float vz = pos[2] - cone_beam_cfg->Sz;
-        mt::Float norm = std::sqrt(vx * vx + vy * vy + vz * vz);
-        return { vx / norm, vy / norm, vz / norm };
+
+    inline std::array<Float, 3> DetectorGeometry::Ray(const Uint ix, const Uint iy) const
+    {
+        validateShapeNonzero(Nx, Ny);
+        validateSubscriptInBounds(ix, iy, Nx, Ny);
+
+        if (std::get_if<ParallelBeamCfg>(&BeamCfg)) {
+            return { 0.0f, 0.0f, 1.0f };
+        }
+        else if (const ConeBeamCfg* cone_beam_cfg = std::get_if<ConeBeamCfg>(&BeamCfg)) {
+            std::array<Float, 3> pos = Position(ix, iy);
+            Float vx = pos[0] - cone_beam_cfg->Sx;
+            Float vy = pos[1] - cone_beam_cfg->Sy;
+            Float vz = pos[2] - cone_beam_cfg->Sz;
+            Float norm = std::sqrt(vx * vx + vy * vy + vz * vz);
+            return { vx / norm, vy / norm, vz / norm };
+        }
+        else if (const VectorBeamCfg* vector_beam_cfg = std::get_if<VectorBeamCfg>(&BeamCfg)) {
+            Uint idx = sub2idx(iy, ix, Ny, Nx);
+            Float vx = vector_beam_cfg->Vx.at(idx); // By using "at()", we implicitly check that there are enough elements in the vectors
+            Float vy = vector_beam_cfg->Vy.at(idx);
+            Float vz = vector_beam_cfg->Vz.at(idx);
+            Float norm = std::sqrt(vx * vx + vy * vy + vz * vz);
+            return { vx / norm, vy / norm, vz / norm };
+        }
+        else {
+            throw std::runtime_error("Invalid beam type.");
+        }
     }
-    else if (const mt::VectorBeamCfg* vector_beam_cfg = std::get_if<mt::VectorBeamCfg>(&BeamCfg)) {
-        mt::Uint idx = mt::sub2idx(iy, ix, Ny, Nx);
-        mt::Float vx = vector_beam_cfg->Vx.at(idx); // By using "at()", we implicitly check that there are enough elements in the vectors
-        mt::Float vy = vector_beam_cfg->Vy.at(idx);
-        mt::Float vz = vector_beam_cfg->Vz.at(idx);
-        mt::Float norm = std::sqrt(vx * vx + vy * vy + vz * vz);
-        return { vx / norm, vy / norm, vz / norm };
-    }
-    else {
-        throw std::runtime_error("Invalid beam type.");
-    }
-}
+
+} // namespace mt
